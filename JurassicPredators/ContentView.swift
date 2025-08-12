@@ -10,16 +10,15 @@ import SwiftUI
 struct ContentView: View {
 	
 	let predators = Predators()
+	
 	@State var searchText = ""
+	@State var isAlphabetical = false
+	@State var currentChoice = PredatorType.all
 	
 	var filteredPredators: [Predator] {
-		if searchText.isEmpty  {
-			return predators.jPredators
-		} else {
-			return predators.jPredators.filter { predator in
-				predator.name.localizedCaseInsensitiveContains(searchText)
-			}
-		}
+		predators.filter(by: currentChoice)
+		predators.sortAlphabetically(by: isAlphabetical)
+		return predators.searchText(for: searchText)
 	}
 	
 	var body: some View {
@@ -62,6 +61,34 @@ struct ContentView: View {
 			.searchable(text: $searchText, prompt: "Search Predator")
 			.animation(.easeIn, value: searchText)
 			.autocorrectionDisabled()
+			.toolbar {
+				ToolbarItem(placement: .topBarLeading) {
+					Button {
+						withAnimation {
+							isAlphabetical.toggle()
+						}
+					} label: {
+						Image(systemName: isAlphabetical ? "film" : "textformat")
+							.foregroundStyle(.white)
+							.symbolEffect(.bounce, value: isAlphabetical)
+					}
+				}
+				
+				ToolbarItem(placement: .topBarTrailing) {
+					Menu {
+						Picker("Filter", selection: $currentChoice.animation()) {
+							ForEach(PredatorType.allCases) { type in
+								Label(type.rawValue.capitalized, systemImage: type.icon)
+							}
+						}
+					} label: {
+						Image(systemName: "slider.horizontal.3")
+							.foregroundStyle(.white)
+					}
+				}
+				
+			}
+			
 		}
 	}
 }
