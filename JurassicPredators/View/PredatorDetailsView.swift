@@ -9,8 +9,10 @@ import SwiftUI
 import MapKit
 
 struct PredatorDetailsView: View {
+	
 	let predator: Predator
 	@State var position: MapCameraPosition
+	@Namespace var nameSpace
 	
 	var body: some View {
 		GeometryReader { reader in
@@ -45,9 +47,18 @@ struct PredatorDetailsView: View {
 					
 						// current location
 					NavigationLink {
-						Image(predator.image)
-							.resizable()
-							.scaledToFit()
+						PredatorsMap(
+							position:
+									.camera(
+										MapCamera(
+											centerCoordinate: predator.location,
+											distance: 1000,
+											heading: 200,
+											pitch: 80
+										)
+									)
+						)
+						.navigationTransition(.zoom(sourceID: 0, in: nameSpace))
 					} label: {
 						Map(position: $position) {
 							Annotation(
@@ -72,6 +83,7 @@ struct PredatorDetailsView: View {
 						}
 						.clipShape(.rect(cornerRadius: 10))
 					}
+					.matchedTransitionSource(id: 0, in: nameSpace)
 					
 					Text("Appears in:")
 						.font(.title2)
