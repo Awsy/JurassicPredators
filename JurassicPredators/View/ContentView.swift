@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct ContentView: View {
 	
@@ -26,12 +27,11 @@ struct ContentView: View {
 			List(filteredPredators) { predator in
 				
 				NavigationLink {
-					Image(predator.image)
-						.resizable()
-						.scaledToFit()
-						.frame(width: 300, height: 300)
-						.background(.brown)
-					
+					PredatorDetailsView(predator: predator, position: .camera(
+						MapCamera(
+							centerCoordinate:
+								predator.location,
+							distance: 30000)))
 				} label: {
 					HStack {
 						Image(predator.image)
@@ -69,7 +69,6 @@ struct ContentView: View {
 						}
 					} label: {
 						Image(systemName: isAlphabetical ? "film" : "textformat")
-							.foregroundStyle(.white)
 							.symbolEffect(.bounce, value: isAlphabetical)
 					}
 				}
@@ -83,13 +82,13 @@ struct ContentView: View {
 						}
 					} label: {
 						Image(systemName: "slider.horizontal.3")
-							.foregroundStyle(.white)
 					}
 				}
 				
 			}
 			
 		}
+		.tint(.white)
 	}
 }
 
